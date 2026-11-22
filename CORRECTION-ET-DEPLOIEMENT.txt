@@ -1,0 +1,25 @@
+LEZACHH — ARCHIVE CORRIGÉE
+
+Cette version reprend la direction visuelle de la prévisualisation Lovable et le style vitré vert du visuel de sécurité pour l’administration.
+
+MODIFICATIONS
+- Nouvelle palette graphite/orange sur la vitrine, titres et boutique plus lisibles, cartes et surfaces cohérentes.
+- Le tableau de bord affiche le nombre d’offres, la réduction moyenne, les économies cumulées et le tarif de formation.
+- Les chiffres se recalculent depuis les offres reçues par l’API ; les guides, le matériel et les prix gardent les devises des vendeurs.
+- L’écran admin est remaquetté en carte vitrée, garde l’authentification existante et ne montre pas de faux code OTP.
+- Le mot de passe administrateur n’est pas stocké dans les fichiers. Le générateur masque la saisie et produit une empreinte PBKDF2 destinée au secret Cloudflare ADMIN_PASSWORD_HASH.
+- L’API est routée par worker.js et la configuration Workers expose les assets publics sans téléverser le code Worker comme fichier.
+- Les contrôles automatisés couvrent la sécurité, l’API, les migrations et les devises des fiches produits.
+
+MISE EN LIGNE
+1. Dans wrangler.worker.toml, remplacer l’identifiant D1 fictif par celui de la base utilisée dans Cloudflare.
+2. Appliquer les migrations avec :
+   npx wrangler d1 migrations apply lezachh-admin --remote --config wrangler.worker.toml
+3. Générer l’empreinte du mot de passe depuis une invite locale masquée :
+   node scripts/hash-admin-password.mjs
+4. Enregistrer ADMIN_USERNAME, ADMIN_PASSWORD_HASH et ADMIN_SESSION_SECRET comme secrets du Worker via Wrangler.
+5. Déployer avec :
+   npx wrangler deploy --config wrangler.worker.toml
+6. Vérifier /api/health : le statut doit être « ok » et tous les contrôles doivent être vrais.
+
+Ne pas mettre le mot de passe en clair dans les fichiers, le ZIP, Git, ou un champ de variable publique.

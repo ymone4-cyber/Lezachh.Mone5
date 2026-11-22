@@ -1,0 +1,9 @@
+{
+  "name": "lezachh-cloudflare-pages",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "security-check": "node scripts/security-check.mjs",
+    "build:worker": "npx wrangler pages functions build functions --outdir .worker-build && node -e \"require('node:fs').copyFileSync('.worker-build/index.js','public/_worker.js')\""
+  }
+}
